@@ -19,13 +19,13 @@ STAMP-Miner/
 │   ├── 02_cluster_select_top100.py   # Agglomerative clustering and diversity-based selection
 │   ├── 05_extract_observed_ifp.py    # Post-docking pose analysis and interaction profiling
 │   ├── 06_evaluate_pipeline.py       # Enrichment analysis, ablation studies, and robustness
-│   └── 07_make_paper_figures.py      # Generation of manuscript-quality heatmaps and plots
+│   └── 07_make_paper_figures_v9.py      # Generation of manuscript-quality heatmaps and plots
 │
-├── data/                      # Data Storage
-│   ├── template/
-│   │   └── 5mdr.pdb           # Native VhChip-GlcNAc6 complex template
-│   └── raw/
-│       └── sample_library.xlsx # Example peptide library for benchmarking
+├── data/
+│   ├── VhChip-GlcNAc6.pdb           # Native VhChip-GlcNAc6 complex template
+│   └── TSP_sca_new.xlsx             # Example peptide library for benchmarking
+│
+│
 │
 ├── bin/                       # Binary Assets and Model Weights
 │   ├── AWLSTM_2.pth           # Pre-trained weights for the AWLSTM module (Module 3)
