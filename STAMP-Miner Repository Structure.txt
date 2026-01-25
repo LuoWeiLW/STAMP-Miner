@@ -1,0 +1,35 @@
+STAMP-Miner/
+├── README.md                  # Comprehensive documentation and usage guide
+├── requirements.txt           # Dependency list (numpy, pandas, biopython, torch, etc.)
+├── LICENSE                    # Open-source license (e.g., MIT or Apache 2.0)
+│
+├── core/                      # Core Algorithm Library (Underlying Logic)
+│   ├── __init__.py            # Initialization for Python package compatibility
+│   ├── pdb_utils.py           # PDB parsing, coordinate assembly, and distance metrics
+│   ├── peptide_features.py    # Physicochemical vectorization (6D Indicator encoding)
+│   ├── pi_geometry.py         # Geometric logic for Pi-Pi and Cation-Pi interactions
+│   ├── ifp_rules.py           # Interaction Fingerprint (IFP) rules and normalization
+│   ├── interaction_priors.py  # Interface-based structural prior extraction logic
+│   ├── scoring.py             # Dual-channel hybrid scoring system (Sim + Comp)
+│   └── w136_anchor.py         # Sequence-level hotspot anchoring probability (Eq. 15-16)
+│
+├── scripts/                   # Workflow Automation (Step-by-Step execution)
+│   ├── 00_extract_native_priors.py   # Extract structural priors from the 5MDR template
+│   ├── 01_screen_peptides.py         # Screen libraries and generate ranked candidate tables
+│   ├── 02_cluster_select_top100.py   # Agglomerative clustering and diversity-based selection
+│   ├── 05_extract_observed_ifp.py    # Post-docking pose analysis and interaction profiling
+│   ├── 06_evaluate_pipeline.py       # Enrichment analysis, ablation studies, and robustness
+│   └── 07_make_paper_figures.py      # Generation of manuscript-quality heatmaps and plots
+│
+├── data/                      # Data Storage
+│   ├── template/
+│   │   └── 5mdr.pdb           # Native VhChip-GlcNAc6 complex template
+│   └── raw/
+│       └── sample_library.xlsx # Example peptide library for benchmarking
+│
+├── bin/                       # Binary Assets and Model Weights
+│   ├── AWLSTM_2.pth           # Pre-trained weights for the AWLSTM module (Module 3)
+│   └── dict_AWLSTM.csv        # Amino acid token dictionary for neural networks
+│
+└── examples/                  # Demonstration and Quick Start
+    └── demo_run.sh            # Shell script for an end-to-end pipeline demonstration
