@@ -18,6 +18,7 @@ Module 3 (Specific Identification): Run scripts/ 04_predict_specification.py and
 ### 🚀 Installation & Reproducibility
 ### 1. Clone the repository
 git clone https://github.com/LuoWeiLW/STAMP-Miner.git
+
 cd STAMP-Miner
 
 ### 2. IMPORTANT: Auto-refactor hardcoded paths to your local environment
