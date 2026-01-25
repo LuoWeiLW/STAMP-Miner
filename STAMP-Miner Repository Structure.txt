@@ -1,35 +1,44 @@
 STAMP-Miner/
-├── README.md                  # Comprehensive documentation and usage guide
-├── requirements.txt           # Dependency list (numpy, pandas, biopython, torch, etc.)
-├── LICENSE                    # Open-source license (e.g., MIT or Apache 2.0)
+├── README.md                      # Comprehensive documentation and reproducibility guide
+├── requirements.txt               # Project dependencies (PyTorch, Biopython, etc.)
+├── LICENSE                        # Open-source license (MIT/Apache)
+├── setup_reproducibility.py       # Automated script to refactor absolute paths to local
 │
-├── core/                      # Core Algorithm Library (Underlying Logic)
-│   ├── __init__.py            # Initialization for Python package compatibility
-│   ├── pdb_utils.py           # PDB parsing, coordinate assembly, and distance metrics
-│   ├── peptide_features.py    # Physicochemical vectorization (6D Indicator encoding)
-│   ├── pi_geometry.py         # Geometric logic for Pi-Pi and Cation-Pi interactions
-│   ├── ifp_rules.py           # Interaction Fingerprint (IFP) rules and normalization
-│   ├── interaction_priors.py  # Interface-based structural prior extraction logic
-│   ├── scoring.py             # Dual-channel hybrid scoring system (Sim + Comp)
-│   └── w136_anchor.py         # Sequence-level hotspot anchoring probability (Eq. 15-16)
+├── core/                          # Core Algorithm Library (Underlying Logic)
+│   ├── __init__.py                # Package initialization
+│   ├── pdb_utils.py               # PDB parsing and coordinate geometric calculations
+│   ├── peptide_features.py        # Physicochemical vectorization (6D Indicator encoding)
+│   ├── pi_geometry.py             # Geometric logic for Pi-Pi/Cation-Pi interactions
+│   ├── ifp_rules.py               # Interaction Fingerprint (IFP) normalization rules
+│   ├── interaction_priors.py      # Structural prior extraction from VhChip template
+│   ├── scoring.py                 # Hierarchical scoring function (Similarity + Comp)
+│   ├── w136_anchor.py             # Hotspot anchoring probability (Eq. 15-16)
+│   └── model_awlstm.py            # AWLSTM neural network architecture (Module 3)
 │
-├── scripts/                   # Workflow Automation (Step-by-Step execution)
-│   ├── 00_extract_native_priors.py   # Extract structural priors from the 5MDR template
-│   ├── 01_screen_peptides.py         # Screen libraries and generate ranked candidate tables
-│   ├── 02_cluster_select_top100.py   # Agglomerative clustering and diversity-based selection
-│   ├── 05_extract_observed_ifp.py    # Post-docking pose analysis and interaction profiling
-│   ├── 06_evaluate_pipeline.py       # Enrichment analysis, ablation studies, and robustness
-│   └── 07_make_paper_figures_v9.py      # Generation of manuscript-quality heatmaps and plots
+├── scripts/                       # Workflow Automation (Step-by-Step execution)
+│   ├── 00_extract_native_priors.py # Extracts structural logic from 5MDR template
+│   ├── 01_screen_peptides.py      # High-throughput screening of peptide libraries
+│   ├── 02_cluster_select_top100.py # Agglomerative clustering for candidate diversity
+│   ├── 03_train_awlstm.py         # Model training pipeline for the AWLSTM module
+│   ├── 04_predict_specificity.py  # Final specificity recognition and P1-P4 identification
+│   ├── 05_extract_observed_ifp.py # Post-docking pose interaction profiling
+│   ├── 06_evaluate_pipeline.py    # Enrichment and ablation study analytics
+│   └── 07_make_paper_figures.py   # One-click generation of manuscript-quality plots
 │
-├── data/
-│   ├── VhChip-GlcNAc6.pdb           # Native VhChip-GlcNAc6 complex template
-│   └── TSP_sca_new.xlsx             # Example peptide library for benchmarking
+├── data/                          # Data Assets
+│   ├── VhChip-chitohexaose.pdb    # Reference crystal structure (PDB ID: 5MDR)
+│   ├── TSP_sca_new.xlsx           # Initial peptide library derived from tilapia scales
+│   └── demo_library.xlsx          # Minimal dataset for rapid testing
 │
+├── bin/                           # Model Weights and Dictionaries
+│   ├── AWLSTM.pth                 # Pre-trained weights for the AWLSTM module
+│   └── dict_AWLSTM.csv            # Amino acid tokenization dictionary
 │
+├── step2_prior_knowledge/         # Module 2 Logic
+│   └── physical_filter.py         # Heuristic filters (Helix, Charge, Amphipathicity)
 │
-├── bin/                       # Binary Assets and Model Weights
-│   ├── AWLSTM_2.pth           # Pre-trained weights for the AWLSTM module (Module 3)
-│   └── dict_AWLSTM.csv        # Amino acid token dictionary for neural networks
+├── structure_prediction/          # 3D Conformation Module
+│   └── run_colabfold.py           # Automated AlphaFold2/ColabFold batch pipeline
 │
-└── examples/                  # Demonstration and Quick Start
-    └── demo_run.sh            # Shell script for an end-to-end pipeline demonstration
+└── examples/                      # Quick Start Demonstration
+    └── demo_run.sh                # Shell script for end-to-end demo execution
