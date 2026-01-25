@@ -16,7 +16,7 @@ Module 2 (Physicochemical Filtration): Use step2_prior_knowledge/physical_filter
 Module 3 (Specific Identification): Run scripts/ 04_predict_specification.py and use the AWLSTM model to lock the final candidate peptides P1-P4.
 
 ### 🚀 Installation & Reproducibility
-# 1. Clone the repository
+### 1. Clone the repository
 git clone https://github.com/LuoWeiLW/STAMP-Miner.git
 cd STAMP-Miner
 
