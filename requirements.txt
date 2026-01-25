@@ -1,0 +1,21 @@
+# --- Core Data Processing & Science ---
+numpy>=1.21.6
+pandas>=1.3.5
+openpyxl>=3.0.10      # Required for Excel I/O in screening scripts
+
+# --- Bioinformatics & Computational Chemistry ---
+biopython>=1.79      # Essential for PDB parsing and ProteinAnalysis
+scikit-learn>=1.0.2  # Used for Agglomerative Clustering (Module 2)
+
+# --- Deep Learning Stack (Module 3) ---
+# Note: Ensure CUDA toolkit version matches your GPU environment
+torch>=1.11.0
+torchtext>=0.12.0    # Crucial for AWLSTM vocab and embedding layers
+
+# --- Figure Generation & Visualization ---
+matplotlib>=3.5.2    # For paper-quality plots and loss curves
+seaborn>=0.11.2       # Recommended for heatmaps in Fig. 2/4
+tqdm>=4.64.0         # Progress bars for batch processing (ColabFold)
+
+# --- System & Utilities ---
+pathlib              # Cross-platform path handling
