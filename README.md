@@ -38,7 +38,7 @@ python scripts/01_screen_peptides.py --input data/raw/TSP_sca_new.xlsx
 
 python step2_prior_knowledge/physical_filter.py
 
-##Step 3: Specificity Recognition (AWLSTM)
+### Step 3: Specificity Recognition (AWLSTM)
 
 python scripts/04_predict_specificity.py
 
