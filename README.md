@@ -16,16 +16,26 @@ The screening funnel follows a 3-tier evolutionary logic:
 3. **Specific Recognition (AWLSTM):** Deep learning-guided specificity validation.
 
 ## 🚀 Installation & Reproducibility
-### 1. Clone the repository
-```bash
+# 1. Clone the repository
 git clone https://github.com/LuoWeiLW/STAMP-Miner.git
 cd STAMP-Miner
 
-#This step will automatically refactor all the absolute paths in the source code (such as the path on drive D) into relative paths suitable for your local environment:
+# 2. IMPORTANT: Auto-refactor hardcoded paths to your local environment
+# This script will fix all absolute paths (D:\...) to work on your machine
 python setup_reproducibility.py
 
-#npm install
+# 3. Install dependencies
 pip install -r requirements.txt
+
+# 4. Usage Workflow
+# Step 1: Structural Screening
+python scripts/01_screen_peptides.py --input data/raw/TSP_sca_new.xlsx
+
+# Step 2: Biophysical Filtering
+python step2_prior_knowledge/physical_filter.py
+
+# Step 3: Specificity Recognition (AWLSTM)
+python scripts/04_predict_specificity.py
 
 #Use workflow
 Module 1 (Structure Screening): Run scripts/01_screen_peptides for preliminary biophysical scoring.
