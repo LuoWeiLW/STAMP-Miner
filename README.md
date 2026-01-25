@@ -30,12 +30,15 @@ pip install -r requirements.txt
 
 ### 4. Usage Workflow
 ### Step 1: Structural Screening
+
 python scripts/01_screen_peptides.py --input data/raw/TSP_sca_new.xlsx
 
 ### Step 2: Biophysical Filtering
+
 python step2_prior_knowledge/physical_filter.py
 
 ###Step 3: Specificity Recognition (AWLSTM)
+
 python scripts/04_predict_specificity.py
 
 
