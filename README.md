@@ -22,6 +22,7 @@ cd STAMP-Miner
 
 ### 2. IMPORTANT: Auto-refactor hardcoded paths to your local environment
 ###This script will fix all absolute paths (D:\...) to work on your machine
+
 python setup_reproducibility.py
 
 ### 3. Install dependencies
