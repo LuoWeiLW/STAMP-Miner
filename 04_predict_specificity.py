@@ -1,159 +1,139 @@
+# -*- coding: utf-8 -*-
+"""
+STAMP-Miner Module 3: Targeted Recognition Validation (Inference)
+Function: Load trained AWLSTM model and predict specificity against target pathogens.
+"""
+
+import os
+import re
+import argparse
 import torch
-import sys
-import torchtext
 import torch.nn as nn
 import torch.nn.functional as F
-from torchtext.vocab import GloVe
-import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-import os
-os.environ["CUDA_VISIBLE_DEVICES"] = '0,1'
-import re
-token = re.compile('[A-Za-z]')
-# if hasattr(torch.cuda,'empty_cache'):
-#     torch.cuda.empty_cache()
-torch.cuda.manual_seed(1234)
-import random
-seed = 1234
-random.seed(seed)
+import numpy as np
+from pathlib import Path
+from torch.utils.data import DataLoader
+from torchtext.vocab import vocab as torch_vocab
+from collections import OrderedDict
 
-from torchtext.vocab import build_vocab_from_iterator
-print('------------------------0提取数据-------------------------------')
-import re
-token = re.compile('[A-Za-z]')
-def reg_text(sequence):
-    new_text = token.findall(sequence)
-    new_text = [word for word in new_text]
-    return new_text
+# --- 环境配置 ---
+def get_args():
+    parser = argparse.ArgumentParser(description="STAMP-Miner AWLSTM Inference Pipeline")
+    parser.add_argument('--input', type=str, default='results/04_docking_ifp/top100_observed_ifp.csv', 
+                        help='Path to the input CSV file from Module 2')
+    parser.add_argument('--model_path', type=str, default='bin/AWLSTM_2.pth', 
+                        help='Path to the trained .pth model')
+    parser.add_argument('--dict_path', type=str, default='bin/dict_AWLSTM.csv', 
+                        help='Path to the dictionary file')
+    parser.add_argument('--output', type=str, default='results/05_final_leads/P1_P4_candidates.csv', 
+                        help='Path to save the prediction results')
+    parser.add_argument('--max_len', type=int, default=70, help='Max sequence length for padding')
+    return parser.parse_args()
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-print('device',device)
-data = pd.read_csv(r'1/pythonProject4/3-win/2023/model/pycham2023/py_amp_stand_sqe.csv', index_col=False)
-print(len(data))
-data.columns=data.columns.str.lower()
-list2=[]
-for i in data['sequence']:
-    i=''.join(i)
-    list2.append(i)
-data['sequence']=list2
-data.sort_values(by=['sequence'],ascending=True,inplace=True)
-
-data=data.drop_duplicates(subset=["sequence"],keep='first',ignore_index=True)
-data =data[data.notnull()]
-
-print(len(data))
-data=data[data['length']>4]
-data=data[data['length']<51]
-data = data[['sequence','target']]
-data['sequence'] = data.sequence.apply(reg_text)
-data['target']= data['target'].apply(lambda x :
-                                     1 if x=='AMP'
-                                     else 0)
-# data['target'] = pd.factorize(data.target)[0]
-print(data.head(2))
-print(torch.cuda.is_available())
-#创建分词列表
-def yield_tokens(data):
-    for text in data:
-        yield text
-
-from torchtext.vocab import build_vocab_from_iterator
-vocab = build_vocab_from_iterator(yield_tokens(data.sequence),specials=['<pad>','<unk>'])
-vocab.set_default_index(vocab["<unk>"])
-vocab_size = len(vocab)
-print(vocab_size)
-print(vocab['F'])
-
-
-print('------------------------LSTM模型-------------------------------')
-embeding_dim = 300
-hidden_size = 70
-vocab_size = len(vocab)
-
+# --- 模型定义 (保持与训练代码完全一致) ---
 class LSTM_Net(nn.Module):
-    def __init__(self, vocab_size, embeding_dim):
+    def __init__(self, vocab_size, embedding_dim=300, hidden_size=70, max_len=70):
         super(LSTM_Net, self).__init__()
-        self.em = nn.Embedding(vocab_size, embeding_dim)  # batch*maxlen*embed_dim
-        self.lstm = nn.LSTM(embeding_dim, hidden_size, batch_first=True)
-        self.fc1 = nn.Linear(hidden_size*70, 256)
+        self.max_len = max_len
+        self.em = nn.Embedding(vocab_size, embedding_dim)
+        self.lstm = nn.LSTM(embedding_dim, hidden_size, batch_first=True)
+        self.fc1 = nn.Linear(hidden_size * max_len, 256)
         self.fc2 = nn.Linear(256, 64)
         self.fc3 = nn.Linear(64, 2)
 
     def forward(self, x):
         x = self.em(x)
-        x = x.view(len(x), -1, embeding_dim)
-        x, _ = self.lstm(x)  # x——》 batch, time_step, output
-        # print(x.shape)
+        x, _ = self.lstm(x)
         x = x.contiguous().view(len(x), -1)
-        x = F.dropout(F.relu(self.fc1(x)),p=0.8)
-        x = F.dropout(F.relu(self.fc2(x)),p=0.4)
+        x = F.dropout(F.relu(self.fc1(x)), p=0.8)
+        x = F.dropout(F.relu(self.fc2(x)), p=0.4)
         x = self.fc3(x)
         return x
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model = LSTM_Net(vocab_size, embeding_dim)
-PATH_model = 'bin/HWLSTM.pth'
-model.load_state_dict(torch.load(PATH_model))
-model.to(device)
-# print(model)
+# --- 数据处理工具 ---
+def reg_text(sequence):
+    """提取氨基酸序列中的字母"""
+    token = re.compile('[A-Za-z]')
+    return token.findall(str(sequence))
 
+def load_custom_vocab(dict_path):
+    """从导出的CSV加载词表，确保索引严格一致"""
+    df_dict = pd.read_csv(dict_path)
+    # 假设CSV第一行是词表字典 {字母: 索引}
+    stoi = df_dict.iloc[0].to_dict()
+    # 转换索引为整数
+    stoi = {k: int(v) for k, v in stoi.items()}
+    # 构建 torchtext 兼容的 vocab 对象
+    sorted_dict = OrderedDict(sorted(stoi.items(), key=lambda v: v[1]))
+    v = torch_vocab(sorted_dict)
+    v.set_default_index(v["<unk>"] if "<unk>" in stoi else 0)
+    return v
 
-print('------------------------2载入预测数据-------------------------------')
-PATH_='bin/test-hw-lstm.csv'
-# PATH_='1/pythonProject4/3-win/2023/model/pycham2023/filter_analyse/TSPs/compare/Scp_ToxinPred.xlsx'
-da_= pd.read_csv(PATH_,index_col=False,)
-# da_.to_excel(r"1/pythonProject4/3-win/2023/model/pycham2023/DL/mic0123/hw-dl/pic/test-hw-lstm.xlsx",
-#              index=False)
-# PATH_=r"1/pythonProject4/3-win/2023/model/pycham2023/DL/mic0123/hw-dl/pic/test-hw-lstm.xlsx"
-# da_= pd.read_excel(PATH_,index_col=False,)
+def main():
+    args = get_args()
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print(f"🚀 Using device: {device}")
 
-# da_ = da_[(da_['length']<51)&(da_['length']>4)]
-# # da_=da_[:1000]
-# da_['sequence']
-da=pd.DataFrame()
-da['sequence']=da_['sequence']#构建数据
-da['sequence']=da.sequence.apply(reg_text)
+    # 1. 加载词表
+    if not os.path.exists(args.dict_path):
+        raise FileNotFoundError(f"❌ Dictionary not found at {args.dict_path}. Please ensure it exists in bin/")
+    vocab = load_custom_vocab(args.dict_path)
+    vocab_size = len(vocab)
+    print(f"📚 Vocab size loaded: {vocab_size}")
 
-x_list= []
-for x in da.sequence:
-    x = vocab(x)
-    x = x + [0] * (70-len(x))
-    x= torch.tensor(x, dtype=torch.int64)
-    x_list.append(x)
-x_list=torch.nn.utils.rnn.pad_sequence(x_list, batch_first=True)
-x_list=x_list.to(device)
-print(x_list.shape)
-print(x_list)
-print('------------------------模型预测-------------------------------')
-# model.forward(x_list)
-model.eval().to(device)
-y_pred_= model(x_list)
-y_pred_= torch.argmax(y_pred_,dim=1)
-y_pred = y_pred_
-print((torch.unique(y_pred,return_counts=True)))
-print(y_pred.shape)
-y_pred = y_pred.cpu().numpy().tolist()
-print('------------------------保存数据-------------------------------')
-data=pd.read_csv(PATH_,index_col=False)
-# data = data[(data['length']<51)&(data['length']>4)]
-data['AWLSTM']=y_pred
-print(data.columns)
-print(data.head(2))
-# data.to_csv(PATH_,index=False)
-print('------------------------打印词表------------------------------')
-# print("词表",vocab(['H', 'D','R', 'P','A', 'C','G', 'Q','E', 'K','L', 'M','N', 'S','Y', 'T','I', 'W','P', 'V',]))
-# #acc
-# print('------------------------Accuracy------------------------------')
-# from  sklearn.metrics import  accuracy_score
-# if 1 in data['target']:
-#     data['target']= data['target'].apply(lambda x :
-#                                          1 if x=='AMP'
-#                                          else 0)
-# y_test = data['target'].values
-# acc= accuracy_score(y_test,y_pred)
-# print('acc=',round(acc,2))
-# data['AWLSTM_Accuracy'] = acc
-# data.to_excel(PATH_,index=False)
-# print(data.shape)
-# print(data[:2])
+    # 2. 初始化并加载模型
+    model = LSTM_Net(vocab_size, max_len=args.max_len).to(device)
+    if not os.path.exists(args.model_path):
+        raise FileNotFoundError(f"❌ Model weights not found at {args.model_path}")
+    
+    # 兼容两种保存方式：state_dict 或 完整模型
+    try:
+        model.load_state_dict(torch.load(args.model_path, map_location=device))
+    except:
+        model = torch.load(args.model_path, map_location=device)
+    
+    model.eval()
+    print("🧠 AWLSTM model loaded successfully.")
+
+    # 3. 载入并预处理待预测数据
+    df = pd.read_csv(args.input)
+    print(f"📥 Loading {len(df)} candidates from {args.input}")
+    
+    sequences = df['sequence'].apply(reg_text)
+    
+    # 4. 序列转为 Tensor 并 Padding
+    x_list = []
+    for seq in sequences:
+        indexed_seq = vocab(seq)
+        # 固定长度处理 (Padding & Truncating)
+        if len(indexed_seq) < args.max_len:
+            indexed_seq = indexed_seq + [0] * (args.max_len - len(indexed_seq))
+        else:
+            indexed_seq = indexed_seq[:args.max_len]
+        x_list.append(torch.tensor(indexed_seq, dtype=torch.int64))
+
+    x_tensor = torch.stack(x_list).to(device)
+
+    # 5. 模型预测
+    print("🧪 Running inference...")
+    with torch.no_grad():
+        logits = model(x_tensor)
+        probs = F.softmax(logits, dim=1)
+        preds = torch.argmax(logits, dim=1).cpu().numpy()
+        amp_probs = probs[:, 1].cpu().numpy() # 获取属于AMP类别的概率
+
+    # 6. 保存结果
+    df['AWLSTM_prediction'] = preds
+    df['AMP_probability'] = np.round(amp_probs, 4)
+    
+    # 筛选预测为正样本的候选肽 (P1-P4 优选)
+    os.makedirs(os.path.dirname(args.output), exist_ok=True)
+    df.to_csv(args.output, index=False)
+    
+    pos_count = np.sum(preds)
+    print(f"✅ Prediction finished. Found {pos_count} potential STAMPs.")
+    print(f"💾 Results saved to: {args.output}")
+
+if __name__ == "__main__":
+    main()
