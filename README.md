@@ -1,4 +1,4 @@
- # STAMP-Miner
+ ## STAMP-Miner
 
 **STAMP-Miner** is a structure-anchored deep learning framework designed for the precision discovery of Specifically Targeted Antimicrobial Peptides (STAMPs). 
 
@@ -17,12 +17,14 @@ Module 3 (Specific Identification): Run scripts/ 04_predict_specification.py and
 
 ### 🚀 Installation & Reproducibility
 ### 1. Clone the repository
+
 git clone https://github.com/LuoWeiLW/STAMP-Miner.git
 
 cd STAMP-Miner
 
 ### 2. IMPORTANT: Auto-refactor hardcoded paths to your local environment
-###This script will fix all absolute paths (D:\...) to work on your machine
+### This script will fix all absolute paths (D:\...) to work on your machine
+
 python setup_reproducibility.py
 
 ### 3. Install dependencies
