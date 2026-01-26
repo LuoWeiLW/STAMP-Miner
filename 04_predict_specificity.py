@@ -93,14 +93,14 @@ class LSTM_Net(nn.Module):
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = LSTM_Net(vocab_size, embeding_dim)
-PATH_model = '1/pythonProject4/3-win/2023/model/pycham2023/DL/mic0123/hw-dl/pic/HWLSTM.pth'
+PATH_model = 'bin/HWLSTM.pth'
 model.load_state_dict(torch.load(PATH_model))
 model.to(device)
 # print(model)
 
 
 print('------------------------2载入预测数据-------------------------------')
-PATH_='1/pythonProject4/3-win/2023/model/pycham2023/DL/mic0123/hw-dl/pic/test-hw-lstm.csv'
+PATH_='bin/test-hw-lstm.csv'
 # PATH_='1/pythonProject4/3-win/2023/model/pycham2023/filter_analyse/TSPs/compare/Scp_ToxinPred.xlsx'
 da_= pd.read_csv(PATH_,index_col=False,)
 # da_.to_excel(r"1/pythonProject4/3-win/2023/model/pycham2023/DL/mic0123/hw-dl/pic/test-hw-lstm.xlsx",
