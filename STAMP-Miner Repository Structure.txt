@@ -31,7 +31,7 @@ STAMP-Miner/
 │   └── demo_library.xlsx          # Minimal dataset for rapid testing
 │
 ├── bin/                           # Model Weights and Dictionaries
-│   ├── AWLSTM.pth                 # Pre-trained weights for the AWLSTM module
+│   ├── HWLSTM.pth                 # Pre-trained weights for the AWLSTM module
 │   └── dict_AWLSTM.csv            # Amino acid tokenization dictionary
 │
 ├── step2_prior_knowledge/         # Module 2 Logic
@@ -42,3 +42,4 @@ STAMP-Miner/
 │
 └── examples/                      # Quick Start Demonstration
     └── demo_run.sh                # Shell script for end-to-end demo execution
+
