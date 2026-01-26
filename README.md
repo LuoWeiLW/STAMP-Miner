@@ -1,4 +1,7 @@
  ## STAMP-Miner
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Journal: Nature Biotechnology](https://img.shields.io/badge/Journal-Nature%20Biotechnology-E91E63)](https://www.nature.com/nbt/)
 
 **STAMP-Miner** is a structure-anchored deep learning framework designed for the precision discovery of Specifically Targeted Antimicrobial Peptides (STAMPs). 
 
@@ -55,7 +58,6 @@ python scripts/02_cluster_select_top100.py \
   --out_xlsx results/03_clustering/top100_cluster_selected.xlsx \
   --top_n 100 --method ward --n_clusters 20
 
-
 #### 1.4 Post-Docking Interaction Profiling
 (Note: This step assumes 3D docking poses have been generated via CDOCKER or similar tools)
 
@@ -65,7 +67,15 @@ python scripts/05_extract_observed_ifp.py \
   --out_csv results/04_docking_ifp/top100_observed_ifp.csv \
   --w136_chain A --w136_resseq 136
 
-#### 1.5 Pipeline Performance Evaluation
+#### 1.5 High-Throughput 3D Structural Modeling
+Transform top-ranked 2D sequences into precise 3D conformers using a local implementation of ColabFold (AlphaFold2). This stage validates the structural plausibility of candidates as "molecular plugs."
+
+python structure_prediction/run_colabfold.py \
+  --input datatop100_peptides.txt \
+  --output results/04_3d_structures
+
+
+#### 1.6 Pipeline Performance Evaluation
 
 python scripts/06_evaluate_pipeline.py \
   --complex_pdb data/VhChip-chitohexaose.pdb \
@@ -73,6 +83,22 @@ python scripts/06_evaluate_pipeline.py \
   --ranked_xlsx results/02_screening/peptide_screening_ranked.xlsx \
   --top100_xlsx results/03_clustering/top100_cluster_selected.xlsx \
   --out_xlsx results/05_eval/evaluation_report.xlsx
+
+#### 1.7 Data Visualization
+
+python scripts/07_make_paper_figures.py \
+  --ranked_xlsx results/02_screening/peptide_screening_ranked.xlsx \
+  --top100_xlsx results/03_clustering/top100_cluster_selected.xlsx \
+  --native_contacts_csv results/01_priors/native_contacts_residue.csv \
+  --w136_shell_csv results/01_priors/w136_shell_residues.csv \
+  --site_profile_global_json results/01_priors/site_profile_global.json \
+  --site_profile_w136_shell_json results/01_priors/site_profile_w136_shell.json \
+  --top22_xlsx data/tsp-first.xlsx \
+  --out_dir results/06_figures \
+  --fontsize 36 \
+  --dpi 800 \
+  --embedding tsne \
+  --tsne_perplexity 20
 
 ### Step 2: Biophysical Filtering
 
@@ -83,5 +109,3 @@ python step2_prior_knowledge/physical_filter.py --input results/03_clustering/to
 python scripts/04_predict_specificity.py \
   --input_csv results/04_docking_ifp/top100_observed_ifp.csv \
   --model_path bin/AWLSTM.pth
-
-
