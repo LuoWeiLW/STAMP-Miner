@@ -31,6 +31,24 @@ def get_args():
     parser.add_argument('--max_len', type=int, default=70, help='Max sequence length for padding')
     return parser.parse_args()
 
+
+def get_args():
+    parser = argparse.ArgumentParser(description="STAMP-Miner AWLSTM Inference Pipeline")
+    parser.add_argument('--input_csv', type=str, default='results/04_docking_ifp/top100_observed_ifp.csv', 
+                        help='Path to the input CSV file from Module 2')
+    
+    parser.add_argument('--model_path', type=str, default='bin/HWLSTM.pth', 
+                        help='Path to the trained .pth model')
+    
+    parser.add_argument('--dict_path', type=str, default='bin/dict_AWLSTM.csv', 
+                        help='Path to the dictionary file')
+    
+    parser.add_argument('--output', type=str, default='results/05_final_leads/P1_P4_candidates.csv', 
+                        help='Path to save the prediction results')
+    parser.add_argument('--max_len', type=int, default=70, help='Max sequence length')
+    return parser.parse_args()
+
+
 # --- 模型定义 (保持与训练代码完全一致) ---
 class LSTM_Net(nn.Module):
     def __init__(self, vocab_size, embedding_dim=300, hidden_size=70, max_len=70):
