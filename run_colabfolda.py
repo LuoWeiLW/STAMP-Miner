@@ -365,8 +365,8 @@ def move_results(temp_dir, output_dir, seq_mapping):
 
 if __name__ == "__main__":
     # 设置输入和输出路径
-    input_file = r"D:\fzu\lw\jupyter\pycham2023\B15-screening\ab-result-opt3-5\pic_data\id_enhanced_screened_peptides_finally.txt"
-    output_dir = r"D:\fzu\lw\jupyter\pycham2023\B15-screening\ab-result-opt3-5\pic_data\peptides_structures"
+    input_file = r"data/top100_peptides.txt"
+    output_dir = r"results/top100_peptides_structures"
 
     try:
         # 运行预测
@@ -374,4 +374,5 @@ if __name__ == "__main__":
         logger.info("✅ 处理完成!")
     except Exception as e:
         logger.error(f"❌ 程序运行失败: {str(e)}")
+
         sys.exit(1)
