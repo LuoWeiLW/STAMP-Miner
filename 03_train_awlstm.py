@@ -259,10 +259,10 @@ for epoch in range(epochs):
 model.load_state_dict(best_model_wts)
 
 #保存模型方式1
-PATH1 = r'D:\fzu\lw\jupyter\pycham2023\amps_predictor\0.8LSTM200AA_model_way1.pth'
+PATH1 = r'result\0.8LSTM200AA_model_way1.pth'
 torch.save(model,PATH1)
 #保存模型方式2
-PATH2 = r'D:\fzu\lw\jupyter\pycham2023\amps_predictor\AWLSTM_2.pth'
+PATH2 = r'result\HWLSTM.pth'
 torch.save(model.state_dict(),PATH2)
 #保存模型方式3
 # PATH3 = '1/pythonProject4/3-win/2023/result/0.8LSTM200AA_model_way3.pth'
@@ -278,117 +278,5 @@ result['test_acc'] = test_acc
 result['train_loss'] = train_loss
 result['test_loss'] = test_loss
 print(result)
-result.to_csv(r'D:\fzu\lw\jupyter\pycham2023\amps_predictor\AWLSTM_accloss.csv', index=False)
-
-print('------------------------6画图------------------------------')
-#准确率
-from matplotlib.pyplot import figure
-# figure(figsize=(9.2,7.5))
-epochs=epochs
-# train_acc = hmp_lstm.train_acc
-# test_acc=hmp_lstm.test_acc
-#绘图
-plt.rcParams['font.serif']=['Times New Roman']
-plt.rc('font',family='Times New Roman',size=26)#极其重要
-plt.plot(range(epochs), train_acc, c='r', label='Train Accuracy')
-plt.plot(range(epochs), test_acc, c='b', label='Test Accuracy')
-plt.title('AWLSTM Accuracy',fontsize=26,)
-plt.xlabel("Epoch",fontsize=26,) # 横轴fontweight='bold'
-plt.ylabel("Accuracy",fontsize=26,) # 纵轴fontweight='bold'
-font1 = {'family' : 'Times New Roman','weight' : 'normal','size': 27}
-plt.legend(prop=font1,loc='best',frameon=False)
-#设置坐标轴字体大小
-plt.yticks(np.arange(0.80,1.01,0.05),fontproperties='Times New Roman',size=26)#设置大小及加粗
-plt.xticks(np.arange(0,epochs+1,epochs/10),fontproperties='Times New Roman', size=26,)
-plt.grid(b=None)
-ax = plt.gca()#获取边框
-ax.spines['bottom'].set_color('black')
-ax.spines['top'].set_color('black')  # 设置上‘脊梁’黑色
-ax.spines['right'].set_color('black')  # 设置上‘脊梁’为无色
-ax.spines['left'].set_color('black') 
-bwith=1
-ax.spines['bottom'].set_linewidth(bwith)
-ax.spines['left'].set_linewidth(bwith)
-ax.spines['top'].set_linewidth(bwith)
-ax.spines['right'].set_linewidth(bwith)
-plt.grid(b=None)
-plt.savefig(r"D:\fzu\lw\jupyter\pycham2023\amps_predictor\AWLSTM_Accuracy.png",dpi=1200,bbox_inches='tight')
-plt.show() # 显示
-
-
-#Loss
-from matplotlib.pyplot import figure
-# figure(figsize=(9.2,7.5))
-epochs=epochs
-# train_acc = hmp_lstm.train_acc
-# test_acc=hmp_lstm.test_acc
-#绘图
-plt.rcParams['font.serif']=['Times New Roman']
-plt.rc('font',family='Times New Roman',size=26)#极其重要
-plt.plot(range(epochs), train_loss, c='r', label='Train Loss')
-plt.plot(range(epochs), test_loss, c='b', label='Test Loss')
-plt.title('AWLSTM Loss',fontsize=26,)
-plt.xlabel("Epoch",fontsize=26,) # 横轴fontweight='bold'
-plt.ylabel("Loss",fontsize=26,) # 纵轴fontweight='bold'
-font1 = {'family' : 'Times New Roman','weight' : 'normal','size': 27}
-plt.legend(prop=font1,loc='best',frameon=False)
-#设置坐标轴字体大小
-plt.yticks(fontproperties='Times New Roman',size=26)#设置大小及加粗
-plt.xticks(np.arange(0,epochs+1,epochs/10),fontproperties='Times New Roman', size=26,)
-# plt.grid(b=None)
-plt.grid()
-ax = plt.gca()#获取边框
-ax.spines['bottom'].set_color('black')
-ax.spines['top'].set_color('black')  # 设置上‘脊梁’黑色
-ax.spines['right'].set_color('black')  # 设置上‘脊梁’为无色
-ax.spines['left'].set_color('black') 
-bwith=1
-ax.spines['bottom'].set_linewidth(bwith)
-ax.spines['left'].set_linewidth(bwith)
-ax.spines['top'].set_linewidth(bwith)
-ax.spines['right'].set_linewidth(bwith)
-plt.grid(b=None)
-plt.savefig(r"D:\fzu\lw\jupyter\pycham2023\amps_predictor\AWLSTM_Loss.png",dpi=1200,bbox_inches='tight')
-plt.show() # 显示
-
-print('------------------------罗维先生，你好。训练已经完成，祝你科研顺利，生活愉快------------------------------')
-print('------------------------罗维先生，你好。训练已经完成，祝你科研顺利，生活愉快------------------------------')
-print('------------------------罗维先生，你好。训练已经完成，祝你科研顺利，生活愉快------------------------------')
-
-# print('训练数据集' + train_data.label.value_counts())
-# print('测试数据集' + test_data.label.value_counts())
-# print('全AMP测试数据集' + test_data_AMP.label.value_counts())
-
-# print('------------------------7保存模型------------------------------')
-# print('------------------------7保存模型-------------------------------')
-# print('------------------------7保存模型------------------------------')
-# #保存模型
-# PATH= './LSTM200AA_model.pth'
-# torch.save(model.state_dict(),PATH)
-
-# 调用模型
-# LSTM200AA_model = LSTM_Net()
-# #恢复权重参数
-# PATH = 'LSTM200AA_model.pth'
-# LSTM200AA_model.load_state_dict(torch.load(PATH))
-# #预测
-# model_eval= LSTM200AA_model.eval()
-# data_pred = pd.read_csv(r'./12.csv')
-# data_pred = data_pred.sequence
-# # _, x_pred =next(iter(test_dl)
-# y_pred = model_eval(data_pred)
-# print(y_pred)
-# data_pred.target=y_pred
-# to.csv(r"  csv")
-
-
-#ctri+/
-# def yield_tokens(data):
-#     for text in data:
-#         yield text
-# from torchtext.vocab import build_vocab_from_iterator
-# vocab = build_vocab_from_iterator(yield_tokens(data_pred.sequence))
-# precessed_text = torch.tensor(vocab(x) for x in data_pred.sequence), dtype=torch.int64)
-# precessed_text = precessed_text + [0] * (200 - len(precessed_text))
-# precessed_text = torch.tensor(precessed_text, dtype=torch.int64)
+result.to_csv(r'result\AWLSTM_accloss.csv', index=False)
 
