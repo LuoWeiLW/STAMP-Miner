@@ -72,7 +72,7 @@ Transform top-ranked 2D sequences into precise 3D conformers using a local imple
 
 python structure_prediction/run_colabfold.py \
   --input data/top100_peptides.txt \
-  --output results/04_3d_structures
+  --output results/top100_peptides_structures
 
 
 #### 1.6 Pipeline Performance Evaluation
@@ -108,4 +108,4 @@ python step2_prior_knowledge/physical_filter.py --input results/03_clustering/to
 
 python scripts/04_predict_specificity.py \
   --input_csv results/04_docking_ifp/top100_observed_ifp.csv \
-  --model_path bin/AWLSTM.pth
+  --model_path bin/HWLSTM.pth
