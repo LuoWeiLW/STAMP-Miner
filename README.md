@@ -10,7 +10,7 @@ Traditional discovery methods are often "sequence-centric," failing to account f
 - **AWLSTM Architecture:** Overcomes data scarcity by reformulating sequence alignment into a binary classification task with attention mechanisms.
 
 ### Workflow
-#Use workflow
+# Use workflow
 Module 1 (Structure Screening): Run scripts/01_screen_peptides for preliminary biophysical scoring.
 Module 2 (Physicochemical Filtration): Use step2_prior_knowledge/physical_filter.py to perform biological constraints such as helicity and charge.
 Module 3 (Specific Identification): Run scripts/ 04_predict_specification.py and use the AWLSTM model to lock the final candidate peptides P1-P4.
