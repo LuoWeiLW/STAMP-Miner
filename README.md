@@ -71,7 +71,7 @@ python scripts/05_extract_observed_ifp.py \
 Transform top-ranked 2D sequences into precise 3D conformers using a local implementation of ColabFold (AlphaFold2). This stage validates the structural plausibility of candidates as "molecular plugs."
 
 python structure_prediction/run_colabfold.py \
-  --input datatop100_peptides.txt \
+  --input data/top100_peptides.txt \
   --output results/04_3d_structures
 
 
