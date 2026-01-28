@@ -1,7 +1,7 @@
  ## STAMP-Miner
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Journal: Nature Biomedical Engineering](https://img.shields.io/badge/Journal-Nature%20Biotechnology-E91E63)](https://www.nature.com/nbt/)
+[![Journal: Nature Biotechnology](https://img.shields.io/badge/Journal-Nature%20Biotechnology-E91E63)](https://www.nature.com/nbt/)
 
 **STAMP-Miner** is a structure-anchored deep learning framework designed for the precision discovery of Specifically Targeted Antimicrobial Peptides (STAMPs). 
 
